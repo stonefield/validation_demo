@@ -29,7 +29,7 @@ module "object" {
 ```
 
 Result:
-```
+```ShellSession
 │ Error: Invalid value for module argument
 │ 
 │   on test.tf line 3, in module "object":
@@ -67,7 +67,7 @@ module "object" {
 ```
 
 Result:
-```
+```ShellSession
 Changes to Outputs:
   + object = {
       + "enable"    = "true"
@@ -107,7 +107,7 @@ module "object" {
 ```
 
 Result:
-```
+```ShellSession
 Changes to Outputs:
   + object = {}
 ```
@@ -149,7 +149,7 @@ module "object" {
 ```
 
 Result:
-```
+```ShellSession
 Changes to Outputs:
   + object = {
       + enable            = true
@@ -182,7 +182,7 @@ module "object" {
 ```
 
 Result:
-```
+```ShellSession
 Error: Invalid value for module argument
 │ 
 │   on test.tf line 3, in module "object":
@@ -243,7 +243,7 @@ module "object" {
 ```
 
 Result:
-```
+```ShellSession
 Changes to Outputs:
   + object = {
       + enable            = true
@@ -261,8 +261,8 @@ Changes to Outputs:
 output "attributes" {
   value = var.cwagent.namespace
 }
-...
-
+```
+```ShellSession
 │ Error: Unsupported attribute
 │ 
 │   on optional_attributes/variables.tf line 22, in output "attributes":
@@ -277,8 +277,8 @@ output "attributes" {
 output "attributes" {
   value = var.cwagent["namespace"]
 }
-...
-
+```
+```ShellSession
  Error: Invalid index
 │ 
 │   on optional_attributes/variables.tf line 26, in output "attributes":
@@ -293,8 +293,8 @@ output "attributes" {
 output "attributes" {
   value = lookup(var.cwagent, "namespace", "unknown")
 }
-...
-
+```
+```ShellSession
 Changes to Outputs:
   + object = "unknown"
 ```
@@ -303,8 +303,8 @@ Changes to Outputs:
 output "attributes" {
   value = keys(var.cwagent)
 }
-...
-
+```
+```ShellSession
 Changes to Outputs:
   + object = [
       + "enable",
@@ -354,7 +354,7 @@ module "object" {
 
 
 Result:
-```
+```ShellSession
 Changes to Outputs:
   + object = {
       + enable    = true
@@ -413,7 +413,7 @@ module "object" {
 ```
 
 Result:
-```
+```ShellSession
 │ Error: failed to execute "../../terraform-aws-bf-utils/validation/validate": 
 │ 
 │ ----------------------------------------------------------------------------------
@@ -487,7 +487,7 @@ output "object" {
 ```
 
 Result:
-```
+```ShellSession
 │ Error: failed to execute "../../terraform-aws-bf-utils/validation/validate": 
 │ 
 │ ----------------------------------------------------------------------------------
@@ -521,7 +521,7 @@ output "object" {
 ```
 
 Result:
-```
+```ShellSession
 Changes to Outputs:
   + object = {
       + enable            = true
@@ -565,7 +565,7 @@ output "attributes" {
 ```
 
 Result:
-```
+```ShellSession
 │ Error: failed to execute "../../terraform-aws-bf-utils/validation/validate": 
 │ 
 │ ----------------------------------------------------------------------------------
@@ -582,12 +582,5 @@ Result:
 │   on ../../terraform-aws-bf-utils/validation/main.tf line 1, in data "external" "validation":
 │    1: data "external" "validation" {
 │ 
-```
-
-```hcl
-```
-
-Result:
-```
 ```
 
