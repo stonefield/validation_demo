@@ -14,9 +14,9 @@ variable "cwagent" {
   })
 }
 
-/*output "attributes" {
+output "attributes" {
   value = var.cwagent
-}*/
+}
 
 /*output "attributes" {
   value = var.cwagent.namespace
@@ -30,6 +30,6 @@ variable "cwagent" {
   value = lookup(var.cwagent, "namespace", "unknown")
 }*/
 
-output "attributes" {
+/*output "attributes" {
   value = keys(var.cwagent)
-}
+}*/

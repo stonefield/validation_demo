@@ -13,6 +13,9 @@ module "validation" {
       presence = "enable,metrics_namespace"
     }
   }
+  assert = [
+    [can(regex("amazon_linux_2|ubuntu", var.cwagent.os)), "Operating system (os) must be amazon_linux_2 OR ubuntu."]
+  ]
 }
 
 

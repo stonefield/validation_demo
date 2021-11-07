@@ -17,7 +17,7 @@ module "object" {
   source = "./map"
   cwagent = {
     enable    = true
-    os        = "amazon_linux_2"
+    os        = "amazon_linux"
     log_group = {
       cluster = "my-cluster"
       role    = "my-role"
@@ -35,7 +35,7 @@ Result:
 │   on test.tf line 3, in module "object":
 │    3:   cwagent = {
 │    4:     enable    = true
-│    5:     os        = "amazon_linux_2"
+│    5:     os        = "amazon_linux"
 │    6:     log_group = {
 │    7:       cluster = "my-cluster"
 │    8:       role    = "my-role"
@@ -55,7 +55,7 @@ module "object" {
   source = "./map"
   cwagent = {
     enable    = true
-    os        = "amazon_linux_2"
+    os        = "amazon_linux"
     # log_group = {
     #   cluster = "my-cluster"
     #   role    = "my-role"
@@ -72,7 +72,7 @@ Changes to Outputs:
   + object = {
       + "enable"    = "true"
       + "namespace" = "my-asg"
-      + "os"        = "amazon_linux_2"
+      + "os"        = "amazon_linux"
     }
 ```
 Terraform changes boolean to string. This happens with numbers as well.
@@ -95,7 +95,7 @@ module "object" {
   source = "./object"
   cwagent = {
     enable    = true
-    os        = "amazon_linux_2"
+    os        = "amazon_linux"
     log_group = {
       cluster = "my-cluster"
       role    = "my-role"
@@ -137,7 +137,7 @@ module "object" {
   source = "./object_defined"
   cwagent = {
     enable    = true
-    os        = "amazon_linux_2"
+    os        = "amazon_linux"
     log_group = {
       cluster = "my-cluster"
       role    = "my-role"
@@ -158,7 +158,7 @@ Changes to Outputs:
           + role    = "my-role"
         }
       + metrics_namespace = "my-asg"
-      + os                = "amazon_linux_2"
+      + os                = "amazon_linux"
     }
 ```
 
@@ -170,7 +170,7 @@ module "object" {
   source = "./object_defined"
   cwagent = {
     enable    = true
-    os        = "amazon_linux_2"
+    os        = "amazon_linux"
     log_group = {
       cluster = "my-cluster"
       role    = "my-role"
@@ -188,7 +188,7 @@ Error: Invalid value for module argument
 │   on test.tf line 3, in module "object":
 │    3:   cwagent = {
 │    4:     enable    = true
-│    5:     os        = "amazon_linux_2"
+│    5:     os        = "amazon_linux"
 │    6:     log_group = {
 │    7:       cluster = "my-cluster"
 │    8:       role    = "my-role"
@@ -200,7 +200,7 @@ Error: Invalid value for module argument
 │ The given value is not suitable for child module variable "cwagent" defined at object_defined/variables.tf:1,1-19: attribute "metrics_namespace" is required.
 ```
 
-### 2.3 object with optional attributes defined
+### 2.4 object with optional attributes defined
 
 Sub module `optional_attributes`
 ```hcl
@@ -231,7 +231,7 @@ module "object" {
   source = "./optional_attributes"
   cwagent = {
     enable    = true
-    os        = "amazon_linux_2"
+    os        = "amazon_linux"
     log_group = {
       cluster = "my-cluster"
       role    = "my-role"
@@ -320,31 +320,268 @@ Changes to Outputs:
 * A typo on an attribute may causes things to behave differently than intended by the programmer that wrote the module.
 
 
+## 3. Variable without type specification
 
+### 3.1 Basic definition
 
-Result:
-```
-```
-
+Sub-module `unspecified`
 ```hcl
+variable "cwagent" {
+  description = "CloudWatch agent specification"
+}
+
+output "attributes" {
+  value = var.cwagent
+}
 ```
 
-Result:
-```
-```
-
+Main module
 ```hcl
+module "object" {
+  source = "./unspecified"
+  cwagent = {
+    enable    = true
+    os        = "amazon_linux"
+    log_group = {
+      cluster = "my-cluster"
+      role    = "my-role"
+    }
+    #metrics_namespace = "my-asg"
+    namespace = "my-asg"
+  }
+}
 ```
+
 
 Result:
 ```
+Changes to Outputs:
+  + object = {
+      + enable    = true
+      + log_group = {
+          + cluster = "my-cluster"
+          + role    = "my-role"
+        }
+      + namespace = "my-asg"
+      + os        = "amazon_linux"
+    }
 ```
 
+As we can see, all attributes passed to the submodule are present.
+
+### 3.1 Lets add some validation of the keys
+
+Sub-module `unspecified`
 ```hcl
+variable "cwagent" {
+  description = "CloudWatch agent specification"
+}
+
+module "validation" {
+  #source   = "git@github.com:basefarm/terraform-aws-bf-utils//validation?ref=v0.2.0"
+  source = "../../../terraform-aws-bf-utils//validation"
+  module   = path.module
+  assert_valid = {
+    cwagent = {
+      value = var.cwagent
+      keys = "os,enable,log_group,metrics_namespace"
+    }
+  }
+}
+
+
+output "attributes" {
+  value = var.cwagent
+}
+```
+
+Main module
+```hcl
+module "object" {
+  source = "./unspecified"
+  cwagent = {
+    enable    = true
+    os        = "amazon_linux"
+    log_group = {
+      cluster = "my-cluster"
+      role    = "my-role"
+    }
+    #metrics_namespace = "my-asg"
+    namespace = "my-asg"
+  }
+}
 ```
 
 Result:
 ```
+│ Error: failed to execute "../../terraform-aws-bf-utils/validation/validate": 
+│ 
+│ ----------------------------------------------------------------------------------
+│ VALIDATION FAILED in module: unspecified_with_keys_validation
+│ - Invalid key(s) in cwagent: namespace. Valid keys are: os,enable,log_group,metrics_namespace
+│ -
+│ 
+│  Ensure variables are valid.
+│  You can ignore the error following this message until you have fixed your parameters.
+│ ----------------------------------------------------------------------------------
+│ 
+│ 
+│   with module.object.module.validation.data.external.validation[0],
+│   on ../../terraform-aws-bf-utils/validation/main.tf line 1, in data "external" "validation":
+│    1: data "external" "validation" {
+```
+
+**Conclusion**
+
+* Now we can detect a typo from the user of the module. `namespace` is not a valid key.
+* But, with this, we may still miss some parameters, so lets add some more validation.
+
+
+### 3.2 Lets add some validation that validates presence of keys
+
+Sub-module: unspecified_with_presence_validation
+```hcl
+variable "cwagent" {
+  description = "CloudWatch agent specification"
+}
+
+module "validation" {
+  #source   = "git@github.com:basefarm/terraform-aws-bf-utils//validation?ref=v0.2.0"
+  source = "../../../terraform-aws-bf-utils//validation"
+  module   = path.module
+  assert_valid = {
+    cwagent = {
+      value = var.cwagent
+      keys = "os,enable,log_group,metrics_namespace"
+      presence = "enable,metrics_namespace"
+    }
+  }
+}
+
+
+output "attributes" {
+  value = var.cwagent
+}
+
+```
+
+Main module
+```hcl
+module "object" {
+  source = "./unspecified_with_presence_validation"
+  cwagent = {
+    enable    = true
+    os        = "amazon_linux"
+    log_group = {
+      cluster = "my-cluster"
+      role    = "my-role"
+    }
+    #metrics_namespace = "my-asg"
+    namespace = "my-asg"
+  }
+}
+
+output "object" {
+  value = module.object.attributes
+}
+```
+
+Result:
+```
+│ Error: failed to execute "../../terraform-aws-bf-utils/validation/validate": 
+│ 
+│ ----------------------------------------------------------------------------------
+│ VALIDATION FAILED in module: unspecified_with_presence_validation
+│ - Invalid key(s) in cwagent: namespace. Valid keys are: os,enable,log_group,metrics_namespace
+│ - Missing keys in cwagent: metrics_namespace.
+│ -
+│
+```
+
+### 3.3 Fix errors
+
+Main module
+```hcl
+module "object" {
+  source = "./unspecified_with_presence_validation"
+  cwagent = {
+    enable    = true
+    os        = "amazon_linux"
+    log_group = {
+      cluster = "my-cluster"
+      role    = "my-role"
+    }
+    metrics_namespace = "my-asg"
+  }
+}
+
+output "object" {
+  value = module.object.attributes
+}
+```
+
+Result:
+```
+Changes to Outputs:
+  + object = {
+      + enable            = true
+      + log_group         = {
+          + cluster = "my-cluster"
+          + role    = "my-role"
+        }
+      + metrics_namespace = "my-asg"
+      + os                = "amazon_linux"
+    }
+```
+
+### 3.3 Lets add some assertions on content of the attributes
+
+Sub-module: 
+```hcl
+variable "cwagent" {
+  description = "CloudWatch agent specification"
+}
+
+module "validation" {
+  #source   = "git@github.com:basefarm/terraform-aws-bf-utils//validation?ref=v0.2.0"
+  source = "../../../terraform-aws-bf-utils//validation"
+  module   = path.module
+  assert_valid = {
+    cwagent = {
+      value = var.cwagent
+      keys = "os,enable,log_group,metrics_namespace"
+      presence = "enable,metrics_namespace"
+    }
+  }
+  assert = [
+    [can(regex("amazon_linux_2|ubuntu", var.cwagent.os)), "Operating system (os) must be amazon_linux_2 OR ubuntu."]
+  ]
+}
+
+
+output "attributes" {
+  value = var.cwagent
+}
+```
+
+Result:
+```
+│ Error: failed to execute "../../terraform-aws-bf-utils/validation/validate": 
+│ 
+│ ----------------------------------------------------------------------------------
+│ VALIDATION FAILED in module: validation_with_assert
+│ - 
+│ - Operating system (os) must be amazon_linux_2 OR ubuntu.
+│ 
+│  Ensure variables are valid.
+│  You can ignore the error following this message until you have fixed your parameters.
+│ ----------------------------------------------------------------------------------
+│ 
+│ 
+│   with module.object.module.validation.data.external.validation[0],
+│   on ../../terraform-aws-bf-utils/validation/main.tf line 1, in data "external" "validation":
+│    1: data "external" "validation" {
+│ 
 ```
 
 ```hcl

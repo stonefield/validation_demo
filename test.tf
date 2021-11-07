@@ -1,13 +1,13 @@
 module "object" {
-  source = "./object_defined"
+  source = "./validation_with_assert"
   cwagent = {
     enable    = true
-    os        = "amazon_linux_2"
+    os        = "amazon_linux"
     log_group = {
       cluster = "my-cluster"
       role    = "my-role"
     }
-    metrics_namespace = "my-asg"
+    #metrics_namespace = "my-asg"
     namespace = "my-asg"
   }
 }
