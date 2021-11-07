@@ -371,7 +371,7 @@ As we can see, all attributes passed to the submodule are present.
 
 ### 3.1 Lets add some validation of the keys
 
-Sub-module `unspecified`
+Sub-module `unspecified_with_keys_validation`
 ```hcl
 variable "cwagent" {
   description = "CloudWatch agent specification"
@@ -439,7 +439,7 @@ Result:
 
 ### 3.2 Lets add some validation that validates presence of keys
 
-Sub-module: unspecified_with_presence_validation
+Sub-module: `unspecified_with_presence_validation`
 ```hcl
 variable "cwagent" {
   description = "CloudWatch agent specification"
@@ -536,7 +536,7 @@ Changes to Outputs:
 
 ### 3.3 Lets add some assertions on content of the attributes
 
-Sub-module: 
+Sub-module: `validation_with_assert`
 ```hcl
 variable "cwagent" {
   description = "CloudWatch agent specification"
