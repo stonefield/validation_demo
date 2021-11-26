@@ -584,3 +584,8 @@ Result:
 │ 
 ```
 
+
+**Validation is not perfect**
+
+* Values that are depending on data or calculated values cannot be validated, 
+  as terraform will fail before validation is run

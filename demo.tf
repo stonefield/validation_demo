@@ -1,5 +1,5 @@
-module "object" {
-  source = "./validation_with_assert"
+module "demo" {
+  source = "./map"
   cwagent = {
     enable    = true
     os        = "amazon_linux"
@@ -12,6 +12,6 @@ module "object" {
   }
 }
 
-output "object" {
-  value = module.object.attributes
+output "demo" {
+  value = module.demo.attributes
 }
