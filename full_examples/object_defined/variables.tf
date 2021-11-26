@@ -2,11 +2,11 @@ variable "cwagent" {
   description = "CloudWatch agent specification"
   type = object({
     enable = bool
-    os = string
+    os     = string
     log_group = object({
       cluster = string
       role    = string
-      })
+    })
     metrics_namespace = string
   })
 }

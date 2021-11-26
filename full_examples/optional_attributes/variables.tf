@@ -9,7 +9,7 @@ variable "cwagent" {
     log_group = object({
       cluster = string
       role    = string
-      })
+    })
     metrics_namespace = optional(string)
   })
 }

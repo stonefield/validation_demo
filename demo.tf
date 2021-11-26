@@ -1,8 +1,8 @@
 module "demo" {
-  source = "./map"
+  source = "./work"
   cwagent = {
-    enable    = true
-    os        = "amazon_linux"
+    enable = true
+    os     = "amazon_linux"
     log_group = {
       cluster = "my-cluster"
       role    = "my-role"

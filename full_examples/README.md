@@ -31,7 +31,7 @@ module "object" {
 Result:
 ```ShellSession
 │ Error: Invalid value for module argument
-│ 
+│
 │   on test.tf line 3, in module "object":
 │    3:   cwagent = {
 │    4:     enable    = true
@@ -43,7 +43,7 @@ Result:
 │   10:     #metrics_namespace = "my-asg"
 │   11:     namespace = "my-asg"
 │   12:   }
-│ 
+│
 │ The given value is not suitable for child module variable "cwagent" defined at map/variables.tf:1,1-19: all map elements must have the same type.
 ```
 
@@ -184,7 +184,7 @@ module "object" {
 Result:
 ```ShellSession
 Error: Invalid value for module argument
-│ 
+│
 │   on test.tf line 3, in module "object":
 │    3:   cwagent = {
 │    4:     enable    = true
@@ -196,7 +196,7 @@ Error: Invalid value for module argument
 │   10:     #metrics_namespace = "my-asg"
 │   11:     namespace = "my-asg"
 │   12:   }
-│ 
+│
 │ The given value is not suitable for child module variable "cwagent" defined at object_defined/variables.tf:1,1-19: attribute "metrics_namespace" is required.
 ```
 
@@ -264,12 +264,12 @@ output "attributes" {
 ```
 ```ShellSession
 │ Error: Unsupported attribute
-│ 
+│
 │   on optional_attributes/variables.tf line 22, in output "attributes":
 │   22:   value = var.cwagent.namespace
 │     ├────────────────
 │     │ var.cwagent is a object, known only after apply
-│ 
+│
 │ This object does not have an attribute named "namespace".
 ```
 
@@ -280,12 +280,12 @@ output "attributes" {
 ```
 ```ShellSession
  Error: Invalid index
-│ 
+│
 │   on optional_attributes/variables.tf line 26, in output "attributes":
 │   26:   value = var.cwagent["namespace"]
 │     ├────────────────
 │     │ var.cwagent is object with 3 attributes
-│ 
+│
 │ The given key does not identify an element in this collection value.
 ```
 
@@ -315,7 +315,7 @@ Changes to Outputs:
 
 **Conclusion**
 
-* Attributes that are not defined in the object is ignored. 
+* Attributes that are not defined in the object is ignored.
 * This means that there is no validation of the object attributes passed to the module.
 * A typo on an attribute may causes things to behave differently than intended by the programmer that wrote the module.
 
@@ -414,18 +414,18 @@ module "object" {
 
 Result:
 ```ShellSession
-│ Error: failed to execute "../../terraform-aws-bf-utils/validation/validate": 
-│ 
+│ Error: failed to execute "../../terraform-aws-bf-utils/validation/validate":
+│
 │ ----------------------------------------------------------------------------------
 │ VALIDATION FAILED in module: unspecified_with_keys_validation
 │ - Invalid key(s) in cwagent: namespace. Valid keys are: os,enable,log_group,metrics_namespace
 │ -
-│ 
+│
 │  Ensure variables are valid.
 │  You can ignore the error following this message until you have fixed your parameters.
 │ ----------------------------------------------------------------------------------
-│ 
-│ 
+│
+│
 │   with module.object.module.validation.data.external.validation[0],
 │   on ../../terraform-aws-bf-utils/validation/main.tf line 1, in data "external" "validation":
 │    1: data "external" "validation" {
@@ -488,8 +488,8 @@ output "object" {
 
 Result:
 ```ShellSession
-│ Error: failed to execute "../../terraform-aws-bf-utils/validation/validate": 
-│ 
+│ Error: failed to execute "../../terraform-aws-bf-utils/validation/validate":
+│
 │ ----------------------------------------------------------------------------------
 │ VALIDATION FAILED in module: unspecified_with_presence_validation
 │ - Invalid key(s) in cwagent: namespace. Valid keys are: os,enable,log_group,metrics_namespace
@@ -566,26 +566,26 @@ output "attributes" {
 
 Result:
 ```ShellSession
-│ Error: failed to execute "../../terraform-aws-bf-utils/validation/validate": 
-│ 
+│ Error: failed to execute "../../terraform-aws-bf-utils/validation/validate":
+│
 │ ----------------------------------------------------------------------------------
 │ VALIDATION FAILED in module: validation_with_assert
-│ - 
+│ -
 │ - Operating system (os) must be amazon_linux_2 OR ubuntu.
-│ 
+│
 │  Ensure variables are valid.
 │  You can ignore the error following this message until you have fixed your parameters.
 │ ----------------------------------------------------------------------------------
-│ 
-│ 
+│
+│
 │   with module.object.module.validation.data.external.validation[0],
 │   on ../../terraform-aws-bf-utils/validation/main.tf line 1, in data "external" "validation":
 │    1: data "external" "validation" {
-│ 
+│
 ```
 
 
 **Validation is not perfect**
 
-* Values that are depending on data or calculated values cannot be validated, 
+* Values that are depending on data or calculated values cannot be validated,
   as terraform will fail before validation is run

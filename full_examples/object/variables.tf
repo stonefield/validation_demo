@@ -1,7 +1,7 @@
 
 variable "cwagent" {
   description = "CloudWatch agent specification"
-  type = object({})
+  type        = object({})
 }
 
 output "attributes" {
