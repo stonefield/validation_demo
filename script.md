@@ -172,13 +172,14 @@ module "validation" {
 ------------
 
 
+
 # unspecified type with presence validation
 
 * Add presence
 
 ------------
       presence = "enable,metrics_namespace"
-  
+
 
 ------------
 
@@ -195,7 +196,57 @@ module "validation" {
 ------------
 
 
-# autoscale module
+# assign defaults
+
+------------
+variable "cwagent" {
+  description = "CloudWatch agent specification"
+  /*dynamic
+    enable    = bool      # Enable CloudWatch
+    os        = string    # Operating system
+    dashboard = bool      # Enable Dashboard
+    log_group = {         # Log group
+      cluster = string    # Name of cluster or group
+      role = string       # Role in cluster
+    }
+    metrics_namespace = string # Name of metric namespace for CloudWatch
+  */
+}
+
+locals {
+  cwagent = merge({
+    dashboard = true
+    os        = "amazon_linux_2"
+    })
+}
+
+
+module "validation" {
+  source = "git@github.com:basefarm/terraform-aws-bf-utils//validation?ref=v0.2.0"
+  module = path.module
+  assert_valid = {
+    cwagent = {
+      value    = local.cwagent
+      keys     = "os,enable,log_group,metrics_namespace"
+      presence = "enable,metrics_namespace,log_group"
+    }
+  }
+  assert = [
+    [can(regex("amazon_linux_2|ubuntu", local.cwagent.os)), "Operating system (os) must be amazon_linux_2 OR ubuntu."]
+  ]
+}
+
+
+output "attributes" {
+  value = var.cwagent
+}
+
+------------
+
+
+* Run
+
+  pre-commit run -a
 
 
 
